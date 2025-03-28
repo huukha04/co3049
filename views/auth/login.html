@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <base href="http://localhost/CO3049_assignment/public/">
+    <link rel="stylesheet" href="assets/styles/global.css">
+
+    <style>
+
+
+    </style>
+
+    <title>Dashboard</title>
+</head>
+<body>
+    <div class="container-lg m-auto p-0 min-vh-100 d-flex flex-column
+                border">
+        <!-- Header -->
+        <?php include($_SERVER['DOCUMENT_ROOT'] . '/CO3049_assignment/views/components/header.php'); ?>
+        
+        <!-- Nội dung chính -->
+        <main class="p-3 flex-fill">
+            <div class="row">
+                <div class="col-12 col-md-6 m-auto">
+                    <div class="card login-card shadow-lg w-100" >
+                        <div class="card-header text-center bg-primary fw-bold p-3">
+                            Đăng nhập
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <label for="account" class="form-label fw-medium">Account</label>
+                                    <input type="text" class="form-control" id="account" name="account" required placeholder="Nhập tài khoản của bạn">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label fw-medium">Mật khẩu</label>
+                                    <input type="password" class="form-control" id="password" name="password" required placeholder="Nhập mật khẩu">
+                                </div>
+                                <div class="mb-3">
+                                    <a href="auth/forgot" class="text-decoration-none">Quên mật khẩu?</a>
+                                </div>
+
+                                <div id="message" class="text-danger text-center mb-3"></div>
+
+                                <div class="text-center mb-3">
+                                    <button type="submit" class="btn btn-primary w-20">Đăng nhập</button>
+                                </div>
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <p>Tôi chưa có tài khoản?</p>
+                                    <a href="auth/register" class="text-primary">Đăng ký</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--  -->
+                <div class="col-12 col-md-6" id="image-container">
+                   
+                </div>
+                
+                <!--  -->
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <?php include($_SERVER['DOCUMENT_ROOT'] . '/CO3049_assignment/views/components/footer.php'); ?>
+
+    </div>
+
+</body>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Lấy dữ liệu từ form
+    const account = document.getElementById('account').value;
+    const password = document.getElementById('password').value;
+
+    // Lấy phần tử để hiển thị thông báo lỗi
+    const messageElement = document.getElementById('message');
+    messageElement.textContent = '';
+    
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(account);
+    const data = {
+        username: isEmail ? "" : account, 
+        email: isEmail ? account : "", 
+        password: password
+    };
+
+    fetch('auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.text()) 
+    .then(data => {
+        if (data.success) {
+            window.location.href = 'main/home';
+        } else {
+            messageElement.textContent = 'Có lỗi xảy ra: ' + data.message;
+        }
+    })
+    .catch(error => {
+        console.error('Có lỗi xảy ra:', error);
+        messageElement.textContent = 'Lỗi kết nối với server';
+    });
+});
+
+</script>
+</html>
